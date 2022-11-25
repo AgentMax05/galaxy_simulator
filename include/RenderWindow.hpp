@@ -3,7 +3,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <vector>
+
 #include "Entity.hpp"
+#include "Planet.hpp"
+
+using namespace std;
 
 class RenderWindow {
 public:
@@ -13,6 +18,9 @@ public:
     void clear();
     void display();
     void render(Entity& entity);
+    void render(Planet& planet);
+    
+    void drawCircle(vector<double> center, int radius, vector<int> color);
 
 private:
     SDL_Window* window;

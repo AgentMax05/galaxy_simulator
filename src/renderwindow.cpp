@@ -1,6 +1,10 @@
 #include "RenderWindow.hpp"
 
 #include <iostream>
+#include <vector>
+#include <math.h>
+
+using namespace std;
 
 RenderWindow::RenderWindow(const char* winTitle, int winWidth, int winHeight) {
     window = NULL;
@@ -47,3 +51,19 @@ void RenderWindow::render(Entity& entity) {
     SDL_RenderCopyEx(renderer, entity.getTexture(), &src, &dest, 0, NULL, SDL_FLIP_NONE);
 }
 
+void RenderWindow::render(Planet& planet) {
+    drawCircle({planet.x, planet.y}, planet.radius, planet.color);
+}
+
+void RenderWindow::drawCircle(vector<double> center, int radius, vector<int> color) {
+    SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
+
+    for (int width = 0; width < radius * 2; width++) {
+        for (int height = 0; height < radius * 2; height++) {
+            if (pow(radius - width, 2) + pow(radius - height, 2) < pow(radius, 2))
+            SDL_RenderDrawPoint(renderer, center[0] + radius - width, center[1] + radius - height);
+        }
+    }
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}
