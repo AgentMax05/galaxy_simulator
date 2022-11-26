@@ -32,7 +32,7 @@ int main(int argc, char* args[]) {
         cout << "SDL IMAGE INIT FAILED. SDL_ERROR: " << SDL_GetError() << "\n";
     }
     
-    RenderWindow window("Game Window", SCREENWIDTH, SCREENHEIGHT);
+    RenderWindow window("Galaxy Simulator", SCREENWIDTH, SCREENHEIGHT);
 
     mainloop(window);
 
