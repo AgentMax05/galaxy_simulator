@@ -7,6 +7,7 @@
 #include "RenderWindow.hpp"
 #include "Clock.hpp"
 
+#include "Galaxy.hpp"
 #include "Planet.hpp"
 
 using namespace std;
@@ -14,9 +15,10 @@ using namespace std;
 const int SCREENWIDTH = 800, SCREENHEIGHT = 800;
 const int REFRESHRATE = 60;
 
-const int MAX_MASS = 10;
-const int MIN_MASS = 10;
-const int NUM_PLANETS = 100;
+const int MAX_MASS = 100000;
+const int MIN_MASS = 10000;
+const int NUM_PLANETS = 3;
+const int MAX_VELOCITY = 1;
 
 int mainloop(RenderWindow& window);
 
@@ -48,12 +50,12 @@ int mainloop(RenderWindow& window) {
 
     srand((unsigned) time(NULL));
 
-    vector<Planet> planets = {};
+    Galaxy galaxy;
 
     for (int i = 0; i < NUM_PLANETS; i++) {
         Planet newPlanet(rand() % 700 + 50, rand() % 700 + 50, rand() % (MAX_MASS-MIN_MASS+1) + MIN_MASS, {rand() % 256, rand() % 256, rand() % 256});
-        newPlanet.setVelocity({double(rand() % 21 - 10), double(rand() % 21 - 10)});
-        planets.push_back(newPlanet);
+        newPlanet.setVelocity({double(rand() % (MAX_VELOCITY * 2 + 1) - MAX_VELOCITY), double(rand() % 21 - 10)});
+        galaxy.addPlanet(newPlanet);
     }
 
     while (mainloopRunning) {
@@ -67,19 +69,7 @@ int mainloop(RenderWindow& window) {
 
         window.clear();
 
-        for (int i = 0; i < planets.size(); i++) {
-            for (int j = 0; j < planets.size(); j++) {
-                if (i == j) {
-                    continue;
-                }
-                planets[i].addForce(planets[j]);
-            }
-        }
-
-        for (int i = 0; i < planets.size(); i++) {
-            planets[i].tick();
-            window.render(planets[i]);
-        }
+        galaxy.tick(window);
 
         window.display();
     }

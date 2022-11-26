@@ -6,51 +6,61 @@ Planet::Planet(double newX, double newY, double newMass, vector<int> newColor) {
     x = newX;
     y = newY;
     mass = newMass;
-    radius = sqrt(100 * mass / 3.14);
+    radius = sqrt(mass / (M_PI * 10));
     acceleration = {0, 0};
     velocity = {0, 0};
-    lastTick = SDL_GetTicks();
 
     color = newColor;
 }
 
-void Planet::addForce(Planet& planet) {
-    double deltaTime = (SDL_GetTicks() - lastTick) * SPEEDMULTIPLIER / 1000.0;
-    
-    double gravForce;
-    double angle;
-    if (getDistance(planet) == 0) {
-        gravForce = 0;
-        angle = 0;
-    } else {
+void Planet::addForce(double force, double angle, double deltaTime) {
+    force = force * deltaTime;
 
-        gravForce = (mass * planet.mass * deltaTime) / (getDistance(planet));
-        angle = getAngle(planet);
-    }
-
-    int multiplierX = planet.x < x ? -1 : 1;
-    int multiplierY = planet.y > y ? -1 : 1;
-
-    double deltaAcceleration = gravForce / mass;
-    acceleration = {acceleration[0] + (deltaAcceleration * abs(cos(angle)) * multiplierX), acceleration[1] + (deltaAcceleration * abs(sin(angle)) * multiplierY)};
+    double deltaAcceleration = force / mass;
+    acceleration = {acceleration[0] + deltaAcceleration * cos(angle), acceleration[1] + deltaAcceleration * sin(angle)};
 }
 
-double Planet::getDistance(Planet& planet) {
-    return sqrt(pow(x - planet.x, 2) + pow(y - planet.y, 2));
-}
+void Planet::tick(double deltaTime) {
+    velocity = {velocity[0] + acceleration[0], velocity[1] - acceleration[1]};
 
-double Planet::getAngle(Planet& planet) {
-    return atan((y - planet.y) / (planet.x -x));
-}
+    x = x + (velocity[0] * deltaTime);
+    y = y - (velocity[1] * deltaTime);
 
-void Planet::tick() {
-    velocity = {velocity[0] + acceleration[0], velocity[1] + acceleration[1]};
-    x += velocity[0];
-    y -= velocity[1];
     acceleration = {0, 0};
-    lastTick = SDL_GetTicks();
 }
 
 void Planet::setVelocity(vector<double> newVelocity) {
     velocity = newVelocity;
+}
+
+double Planet::calcForce(Planet& p1, Planet& p2) {
+    double distance = calcDistance(p1, p2);
+
+    if (distance == 0) {
+        return 0;
+    } 
+
+    return (p1.mass * p2.mass) / pow(distance, 2);
+}
+
+double Planet::calcDistance(Planet& p1, Planet& p2) {
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+
+double Planet::calcAngle(Planet& p1, Planet& p2) {
+    double angle = atan(abs(p1.y - p2.y) / abs(p2.x - p1.x));
+
+    if (p2.x < p1.x) {
+        angle = M_PI - angle;
+    }
+
+    if (p1.y > p2.y) {
+        angle = 2 * M_PI - angle;
+    }
+
+    return angle;
+}
+
+bool Planet::checkCollision(Planet& p1, Planet& p2) {
+    return calcDistance(p1, p2) <= (p1.radius + p2.radius);
 }

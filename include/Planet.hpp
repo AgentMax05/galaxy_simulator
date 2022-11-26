@@ -7,17 +7,20 @@ using namespace std;
 
 class Planet {
 public:
-    Planet(double x, double y, double mass, vector<int> color);
-    void addForce(Planet& planet);
     double mass, radius, x, y;
     vector<double> acceleration, velocity;
-    void tick();
+
+    Planet(double x, double y, double mass, vector<int> color);
+    void addForce(double force, double angle, double deltaTime);
+
+    void tick(double deltaTime);
     void setVelocity(vector<double> newVelocity);
-    
+
+    static double calcForce(Planet& p1, Planet& p2);
+    static double calcAngle(Planet& p1, Planet& p2);
+    static double calcDistance(Planet& p1, Planet& p2);
+    static bool checkCollision(Planet& p1, Planet& p2);
+
     vector<int> color;
 private:
-    double getDistance(Planet& planet);
-    double getAngle(Planet& planet);
-    int lastTick;
-    const double SPEEDMULTIPLIER = 5;
 };

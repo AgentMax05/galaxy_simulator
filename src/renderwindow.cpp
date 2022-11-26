@@ -67,3 +67,11 @@ void RenderWindow::drawCircle(vector<double> center, int radius, vector<int> col
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 }
+
+void RenderWindow::drawLine(vector<double> p1, vector<double> p2, vector<int> color) {
+    SDL_SetRenderDrawColor(renderer, color[0], color[1], color[2], 255);
+
+    SDL_RenderDrawLine(renderer, p1[0], p1[1], p2[0], p2[1]);
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+}

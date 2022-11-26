@@ -19,6 +19,8 @@ public:
     void display();
     void render(Entity& entity);
     void render(Planet& planet);
+
+    void drawLine(vector<double> p1, vector<double> p2, vector<int> color);
     
     void drawCircle(vector<double> center, int radius, vector<int> color);
 
